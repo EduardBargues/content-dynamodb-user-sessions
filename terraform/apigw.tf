@@ -9,7 +9,12 @@ resource "aws_api_gateway_rest_api" "api" {
   }
 }
 resource "aws_api_gateway_deployment" "api" {
-  depends_on  = [aws_lambda_function.create_session]
+  depends_on = [
+    aws_lambda_function.create_session,
+    aws_api_gateway_integration.create_session,
+    aws_lambda_function.get_session_by_token,
+    aws_api_gateway_integration.get_session_by_token
+  ]
   rest_api_id = aws_api_gateway_rest_api.api.id
   triggers = {
     redeployment = timestamp()
@@ -44,7 +49,7 @@ data "aws_iam_policy_document" "assume_role_policy" {
   }
 }
 resource "aws_iam_role" "main" {
-  name               = "${aws_api_gateway_rest_api.api.name}-role"
+  name               = "${aws_api_gateway_rest_api.api.name}-apigw"
   assume_role_policy = data.aws_iam_policy_document.assume_role_policy.json
 }
 data "aws_iam_policy_document" "cw_policy" {
@@ -69,7 +74,7 @@ data "aws_iam_policy_document" "cw_policy" {
   }
 }
 resource "aws_iam_role_policy" "cloudwatch" {
-  name   = "default"
+  name   = "${local.prefix}-cw-policy"
   role   = aws_iam_role.main.id
   policy = data.aws_iam_policy_document.cw_policy.json
 }

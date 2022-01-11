@@ -5,7 +5,9 @@
 
 secrets.sh
 *.zip
+.terraform
 .terraform.lock.hcl
+.terraform.tfstate.lock.info
 terraform.plan
 terraform.tfstate
 terraform.tfstate.Backup
