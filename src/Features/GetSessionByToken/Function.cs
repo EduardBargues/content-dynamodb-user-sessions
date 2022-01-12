@@ -13,9 +13,12 @@ namespace GetSessionByToken
 {
     public class Function
     {
+        private const string ENV_VAR_DYNAMODB_TABLE = "DYNAMODB_TABLE_NAME";
+        private static string DynamoDbTableName => Environment.GetEnvironmentVariable(ENV_VAR_DYNAMODB_TABLE);
+
         private readonly IRepository _db;
 
-        public Function() : this(new Repository(Configuration.DynamoDbTableName))
+        public Function() : this(new Repository(DynamoDbTableName))
         { }
         public Function(IRepository db)
         {
@@ -29,7 +32,7 @@ namespace GetSessionByToken
 
             return new APIGatewayProxyResponse
             {
-                StatusCode = (int)HttpStatusCode.Created,
+                StatusCode = (int)HttpStatusCode.OK,
                 Body = JsonSerializer.Serialize(session)
             };
         }

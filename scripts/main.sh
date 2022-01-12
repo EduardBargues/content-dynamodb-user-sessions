@@ -2,7 +2,6 @@ set -e
 WORKING_FOLDER=$(pwd)
 
 FEATURES=('CreateSession' 'GetSessionByToken')
- 
 for feature in "${FEATURES[@]}"
 do
     echo ""
@@ -23,4 +22,14 @@ cd $WORKING_FOLDER/terraform
     planFile="terraform.plan"
     terraform plan -out=$planFile
     terraform apply $planFile
+    outputsFile="$WORKING_FOLDER/tests/api.json"
+    rm $outputsFile
+    terraform output -json >> $outputsFile
+cd $WORKING_FOLDER
+
+cd $WORKING_FOLDER/tests
+    echo ""
+    echo "====> E2E TESTS"
+    npm i
+    npm run e2e
 cd $WORKING_FOLDER
