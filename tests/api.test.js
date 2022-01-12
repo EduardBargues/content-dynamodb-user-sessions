@@ -41,5 +41,18 @@ describe(`GIVEN api is up and running`, () => {
         expect(getResponse.data.UserName).toBe(user.UserName);
       });
     });
+
+    describe("WHEN calling DELETE - /sessions/?userName=...", () => {
+      let deleteResponse;
+      beforeAll(async () => {
+        deleteResponse = await axios.delete(
+          `${apiBaseUrl}/sessions?userName=${user.Name}`
+        );
+      });
+
+      it(`THEN should return OK-200`, () => {
+        expect(deleteResponse.status).toBe(200);
+      });
+    });
   });
 });

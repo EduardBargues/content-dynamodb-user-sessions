@@ -6,10 +6,9 @@ resource "aws_api_gateway_rest_api" "api" {
 }
 resource "aws_api_gateway_deployment" "api" {
   depends_on = [
-    aws_lambda_function.create_session,
     aws_api_gateway_integration.create_session,
-    aws_lambda_function.get_session_by_token,
-    aws_api_gateway_integration.get_session_by_token
+    aws_api_gateway_integration.get_session_by_token,
+    aws_api_gateway_integration.delete_user_sessions
   ]
   rest_api_id = aws_api_gateway_rest_api.api.id
   triggers = {

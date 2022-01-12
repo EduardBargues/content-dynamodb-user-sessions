@@ -1,7 +1,7 @@
 set -e
 WORKING_FOLDER=$(pwd)
 
-FEATURES=('CreateSession' 'GetSessionByToken')
+FEATURES=('CreateSession' 'GetSessionByToken' 'DeleteUserSessions')
 for feature in "${FEATURES[@]}"
 do
     echo ""

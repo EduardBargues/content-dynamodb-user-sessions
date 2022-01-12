@@ -23,7 +23,7 @@ resource "aws_dynamodb_table" "main" {
   }
 
   global_secondary_index {
-    name            = "${local.prefix}-tokens-by-user"
+    name            = "GSI_0"
     hash_key        = local.user_name
     projection_type = "KEYS_ONLY"
   }
