@@ -4,6 +4,8 @@ using System.Net;
 using Amazon.Lambda.Core;
 using Amazon.Lambda.APIGatewayEvents;
 using System.Threading.Tasks;
+using System.Linq;
+using System.Text.Json;
 
 // Assembly attribute to enable the Lambda function's JSON input to be converted into a .NET class.
 [assembly: LambdaSerializer(typeof(Amazon.Lambda.Serialization.SystemTextJson.DefaultLambdaJsonSerializer))]
@@ -26,11 +28,12 @@ namespace DeleteUserSessions
         public async Task<APIGatewayProxyResponse> Handler(APIGatewayProxyRequest request, ILambdaContext context)
         {
             var userName = request.QueryStringParameters["userName"];
-            await _db.DeleteSessionsByUserName(userName);
+            var deletedTokens = await _db.DeleteSessionsByUserName(userName);
 
             return new APIGatewayProxyResponse
             {
-                StatusCode = (int)HttpStatusCode.OK,
+                StatusCode = (int)(deletedTokens.Any() ? HttpStatusCode.OK : HttpStatusCode.NotFound),
+                Body = JsonSerializer.Serialize(new { DeletedTokens = deletedTokens })
             };
         }
     }

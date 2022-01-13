@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.Model;
@@ -8,7 +10,7 @@ namespace DeleteUserSessions
 {
     public interface IRepository
     {
-        Task DeleteSessionsByUserName(string userName);
+        Task<string[]> DeleteSessionsByUserName(string userName);
     }
     public class Repository : IRepository
     {
@@ -25,7 +27,7 @@ namespace DeleteUserSessions
             _tableName = tableName ?? throw new ArgumentNullException(nameof(tableName));
         }
 
-        public async Task DeleteSessionsByUserName(string userName)
+        public async Task<string[]> DeleteSessionsByUserName(string userName)
         {
             var queryRequest = GetQueryRequest(userName);
             var queryResponse = await _client.QueryAsync(queryRequest);
@@ -35,6 +37,10 @@ namespace DeleteUserSessions
                 var deleteRequest = GetDeleteRequest(item);
                 await _client.DeleteItemAsync(deleteRequest);
             }
+
+            return queryResponse.Items
+                .Select(item => item[PARTITION_KEY_NAME].S)
+                .ToArray();
         }
 
         private DeleteItemRequest GetDeleteRequest(Dictionary<string, AttributeValue> item)

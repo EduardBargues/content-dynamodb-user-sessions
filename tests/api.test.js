@@ -46,12 +46,19 @@ describe(`GIVEN api is up and running`, () => {
       let deleteResponse;
       beforeAll(async () => {
         deleteResponse = await axios.delete(
-          `${apiBaseUrl}/sessions?userName=${user.Name}`
+          `${apiBaseUrl}/sessions?userName=${user.UserName}`
         );
       });
 
       it(`THEN should return OK-200`, () => {
         expect(deleteResponse.status).toBe(200);
+      });
+
+      it(`THEN should have deleted only one session`, () => {
+        const deletedTokens = deleteResponse.data.DeletedTokens;
+        expect(deletedTokens).toBeDefined();
+        expect(deletedTokens.length).toBe(1);
+        expect(deletedTokens[0]).toBe(postResponse.data.Token);
       });
     });
   });
